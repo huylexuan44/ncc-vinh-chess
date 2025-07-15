@@ -23,8 +23,8 @@ export const data = [
   {
     name: "Ang Tuan Nakamura",
     elo: 680,
-    location: "Quang Trung",
-    badge: "Speed Master",
+    location: "Thành Vinh",
+    badge: "Slow Master",
     img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1783441468711505920/1783441468711506000/1745830367712_undefined1745829414052_0image.png_croppedWEBP@webp",
   },
   {

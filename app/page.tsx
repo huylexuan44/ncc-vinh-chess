@@ -28,6 +28,8 @@ import { ChessLogo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
 import { ChessPiece } from "@/components/chess-piece";
 import { data } from "@/data/data";
+import { cn } from "@/lib/utils";
+import { sponsors } from "@/data/sponsors";
 
 function AnimatedSphere({ position, color, scale = 1 }) {
   const meshRef = useRef(null);
@@ -841,7 +843,7 @@ export default function ChessTournamentPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
-      <header className="relative z-10 px-3 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between backdrop-blur-sm bg-black/30 border-b border-indigo-500/20">
+      <header className="sticky top-0 z-10 px-3 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between backdrop-blur-sm bg-black/30 border-b border-indigo-500/20">
         <div className="flex items-center space-x-2 sm:space-x-3">
           <ChessLogo className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
           <span className="text-white font-bold text-sm sm:text-lg lg:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
@@ -861,6 +863,12 @@ export default function ChessTournamentPage() {
             className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
           >
             Tuyển thủ
+          </Link>
+          <Link
+            href="#sponsors"
+            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+          >
+            Nhà tài trợ
           </Link>
           <Link
             href="#schedule"
@@ -942,7 +950,9 @@ export default function ChessTournamentPage() {
             <p className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 mb-8 pt-4">
               <div className="flex items-center justify-center gap-3">
                 <Users className="w-5 h-5 text-indigo-400" />
-                <span className="text-white/80">Tổng số tuyển đăng kí tham gia giải hiện tại:</span>
+                <span className="text-white/80">
+                  Tổng số tuyển đăng kí tham gia giải hiện tại:
+                </span>
                 <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
                   {data.length} kỳ thủ
                 </Badge>
@@ -980,7 +990,8 @@ export default function ChessTournamentPage() {
                           : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
                       }`}
                     >
-                      {(player.badge === "World Champion" || player.badge === "Legendary") && (
+                      {(player.badge === "World Champion" ||
+                        player.badge === "Legendary") && (
                         <Crown className="w-3 h-3 mr-1" />
                       )}
                       {player.badge}
@@ -994,6 +1005,59 @@ export default function ChessTournamentPage() {
                   </CardContent>
                 </Card>
               ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="sponsors" className="py-12 sm:py-20 px-4 relative">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Nhà tài trợ
+            </h2>
+            <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
+              Chúng tôi xin gửi lời cảm ơn sâu sắc tới các nhà tài trợ đã đồng
+              hành cùng giải đấu Chess NCC Vinh 2025. Sự hỗ trợ quý báu của các
+              đơn vị tài trợ là động lực lớn giúp giải đấu diễn ra thành công,
+              góp phần phát triển phong trào cờ vua và tạo cơ hội cho các kỳ thủ
+              trẻ tỏa sáng.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+            {sponsors.map((item, index) => (
+              <Card
+                key={index}
+                className={cn(
+                  "bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25"
+                )}
+              >
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
+                    <img
+                      className="w-full h-full object-cover rounded-full"
+                      src={item.img || "/placeholder.svg"}
+                      alt={item.name}
+                    />
+                  </div>
+                  <p
+                    className={cn(
+                      "text-xl sm:text-2xl font-bold bg-clip-text text-transparent mt-2",
+                      item.className
+                    )}
+                  >
+                    {item.name}
+                  </p>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <CardTitle className={cn(["text-[18px]", item.color])}>
+                    {item.value}
+                  </CardTitle>
+                  <p className="text-white/80 text-sm mt-2">
+                    {item.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
