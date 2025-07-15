@@ -27,6 +27,7 @@ import Link from "next/link";
 import { ChessLogo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
 import { ChessPiece } from "@/components/chess-piece";
+import { data } from "@/data/data";
 
 function AnimatedSphere({ position, color, scale = 1 }) {
   const meshRef = useRef(null);
@@ -935,211 +936,64 @@ export default function ChessTournamentPage() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
               Tuyển thủ hàng đầu
             </h2>
-            <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto pb-4">
               Những cao thủ cờ vua xuất sắc nhất xóm sẽ tranh tài tại giải đấu
+            </p>
+            <p className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 mb-8 pt-4">
+              <div className="flex items-center justify-center gap-3">
+                <Users className="w-5 h-5 text-indigo-400" />
+                <span className="text-white/80">Tổng số tuyển đăng kí tham gia giải hiện tại:</span>
+                <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
+                  {data.length} kỳ thủ
+                </Badge>
+              </div>
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              {
-                name: "Magnus Dai",
-                elo: 1200,
-                location: "Nghi Tân",
-                badge: "World Champion",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1783440675396653056/1783440675396653000/1745823516989_undefined1745822891637_0image.png_croppedWEBP@webp",
-              },
-              {
-                name: "Judit Hang",
-                elo: 1200,
-                location: "Vinh",
-                badge: "World Champion",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1831537368687972352/1783442595926511600/1298092AFAB_A0C1_4A98_BC20_5CAE7FA5F7EE.jpg@webp",
-              },
-              {
-                name: "Ang Tuan Nakamura",
-                elo: 800,
-                location: "Quang Trung",
-                badge: "Speed Master",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1783441468711505920/1783441468711506000/1745830367712_undefined1745829414052_0image.png_croppedWEBP@webp",
-              },
-              {
-                name: "Fabiano Vinh 3",
-                elo: 850,
-                location: "Bến Thủy",
-                badge: "Challenger",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1783444369026584576/1783444369026584600/744_undefinedimage2.WEBP@webp",
-              },
-
-              {
-                name: "Tai Cu",
-                elo: 800,
-                location: "Vinh Tân",
-                badge: "Challenger",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1826122746413715456/1826122746413715500/1751525644861_ChatGPT_Image_Jul_3__2025__01_53_46_PM.png@webp",
-              },
-              {
-                name: "Ding Hoang",
-                elo: 800,
-                location: "Phan Đăng Lưu",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/0/1783443441674358784/1783443441674358800/1751525628382_avatar_1.png@webp",
-              },
-              {
-                name: "Fabio Son",
-                elo: 850,
-                location: "Quế Phong",
-                badge: "World Champion",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/0/0/1810223235401257000/174123270612010412696_F268_489E_839F_B6E757FE5A66.jpg@webp",
-              },
-              {
-                name: "Le Quang Hai",
-                elo: 800,
-                location: "Nam Đàn",
-                badge: "Speed Master",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1807983162756698112/1807983162756698000/1745830329389_undefinedScreenshot_2025_04_28_155048.png_croppedWEBP@webp",
-              },
-              {
-                name: "Fabiano Thin",
-                elo: 400,
-                location: "Nghi Quang",
-                badge: "Challenger",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1840669672182124544/1840669672182124500/1739780981845_undefinedbnQzxQp3gkECR1p2LRYc_646f83049e8e4_cvtpl.WEBP@webp",
-              },
-              {
-                name: "Đinh Lập Tình",
-                elo: 400,
-                location: "Hưng Nguyên",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1840694295972024320/1930090353453437000/1752286245533IMG_3685.JPG@webp",
-              },
-
-              {
-                name: "Van Dat",
-                elo: 500,
-                location: "Hương Khê",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/0/0/1840678415796015000/1752461033500IMG_0329.JPG@webp",
-              },
-
-              {
-                name: "Xuan Quan",
-                elo: 950,
-                location: "Can Lộc",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/0/1838043036462878720/1833044269397446700/244_undefined9b08d6bedeba67e43eab.jpg@webp",
-              },
-
-              {
-                name: "Dinh Hieu",
-                elo: 950,
-                location: "Hưng Nguyên",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1831893186792919040/1783441990394843100/701_undefinedHieu_Nguyen_inh_2024_01_03T08_12_24.251_0.404239.jpg@webp",
-              },
-
-              {
-                name: "UchiHa Duc Anh Obito",
-                elo: 650,
-                location: "Quỳnh Lưu",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1783438504739475456/1783438504739475500/1751611602476_17409847869083914A782_76F8_4FA0_B00D_8736B920E2B4.jpg@webp",
-              },
-
-              {
-                name: "Hatake Van Thinh Kakashi",
-                elo: 600,
-                location: "Bến Thuỷ",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1831531260632109056/1783443471286145000/100_undefinedavatar.webp@webp",
-              },
-
-              {
-                name: "Duc Chinh",
-                elo: 600,
-                location: "Quỳnh Lưu",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1841678004955123712/1823998475507863600/589_undefinedCh_nh_Nguy_n___c_2024_03_01T08_41_53.256_0.518934.jpg@webp",
-              },
-
-              {
-                name: "Cong Dung",
-                elo: 650,
-                location: "Nghi Xuân",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1929365076809093120/1929365076809093000/1748832367054_undefined2025_06_02_09h45_29.png_croppedWEBP@webp",
-              },
-
-              {
-                name: "Viet Hoang",
-                elo: 800,
-                location: "Anh Son",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1831525207425159168/1831540707106492400/144_undefinedHoang_Nguyen_Viet_2024_08_09T08_35_04.083_0.602385.jpg@webp",
-              },
-              {
-                name: "Hong Man",
-                elo: 350,
-                location: "Nghi Hải",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.ai/1779484504377790464/1827994776956309504/1827994776956309500/1749723253374_undefined1749703024201_0image.png_cropped@webp",
-              },
-
-              {
-                name: "Ta Quyen",
-                elo: 600,
-                location: "Yên Thành",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1833331797883097088/1831634827619602400/185_undefined113_Nguy_n_T__Quy_n.jpg@webp",
-              },
-              {
-                name: "Anh Tuan",
-                elo: 650,
-                location: "Diễn Châu",
-                badge: "Rising Star",
-                img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1833699295371464704/1833682843671203800/748_undefinedIMG_3686__1_.jpg@webp",
-              },
-            ].map((player, index) => (
-              <Card
-                key={index}
-                className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25 group"
-              >
-                <CardHeader className="text-center pb-2">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
-                    <img
-                      className="w-full h-full object-cover rounded-full"
-                      src={player.img || "/placeholder.svg"}
-                      alt={player.name}
-                    />
-                  </div>
-                  <CardTitle className="text-sm sm:text-lg">
-                    {player.name}
-                  </CardTitle>
-                  <Badge
-                    className={`text-xs ${
-                      player.badge === "World Champion"
-                        ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
-                        : player.badge === "Speed Master"
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                        : player.badge === "Challenger"
-                        ? "bg-gradient-to-r from-green-500 to-teal-500 text-white"
-                        : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
-                    }`}
-                  >
-                    {player.badge === "World Champion" && (
-                      <Crown className="w-3 h-3 mr-1" />
-                    )}
-                    {player.badge}
-                  </Badge>
-                </CardHeader>
-                <CardContent className="text-center text-xs sm:text-sm">
-                  <p className="text-indigo-300 font-semibold">
-                    ELO: {player.elo}
-                  </p>
-                  <p className="text-white/70">{player.location}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {data
+              .sort((a, b) => b.elo - a.elo)
+              .map((player, index) => (
+                <Card
+                  key={index}
+                  className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25 group"
+                >
+                  <CardHeader className="text-center pb-2">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
+                      <img
+                        className="w-full h-full object-cover rounded-full"
+                        src={player.img || "/placeholder.svg"}
+                        alt={player.name}
+                      />
+                    </div>
+                    <CardTitle className="text-sm sm:text-lg">
+                      {player.name}
+                    </CardTitle>
+                    <Badge
+                      className={`text-xs ${
+                        player.badge === "World Champion"
+                          ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
+                          : player.badge === "Speed Master"
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                          : player.badge === "Challenger"
+                          ? "bg-gradient-to-r from-green-500 to-teal-500 text-white"
+                          : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
+                      }`}
+                    >
+                      {(player.badge === "World Champion" || player.badge === "Legendary") && (
+                        <Crown className="w-3 h-3 mr-1" />
+                      )}
+                      {player.badge}
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="text-center text-xs sm:text-sm">
+                    <p className="text-indigo-300 font-semibold">
+                      ELO: {player.elo}
+                    </p>
+                    <p className="text-white/70">{player.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
           </div>
         </div>
       </section>
@@ -1205,7 +1059,7 @@ export default function ChessTournamentPage() {
               },
               {
                 icon: Users,
-                title: "Số lượng",
+                title: "Số lượng lên đến",
                 value: "256",
                 subtitle: "Kỳ thủ",
               },
