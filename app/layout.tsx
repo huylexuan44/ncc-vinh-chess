@@ -15,6 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
+      <head>
+        <link rel="icon" href="https://cdn.mezon.ai/0/1840683727907196928/1810223235401257000/1752595139893_image.png" />
+      </head>
       <body>{children}</body>
     </html>
   )

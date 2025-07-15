@@ -840,12 +840,14 @@ export default function ChessTournamentPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
-      <header className="relative z-10 px-3 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between backdrop-blur-sm bg-black/30 border-b border-indigo-500/20">
+      <header className="fixed w-full z-10 px-3 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between backdrop-blur-sm bg-black/30 border-b border-indigo-500/20">
         <div className="flex items-center space-x-2 sm:space-x-3">
-          <ChessLogo className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
-          <span className="text-white font-bold text-sm sm:text-lg lg:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            Chess NCC Vinh
-          </span>
+          <Link href="/" className="flex items-center space-x-2">
+            <ChessLogo className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
+            <span className="text-white font-bold text-sm sm:text-lg lg:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Chess NCC Vinh
+            </span>
+          </Link>
         </div>
 
         <nav className="hidden md:flex gap-4 lg:gap-6">
