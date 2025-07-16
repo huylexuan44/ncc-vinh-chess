@@ -8,9 +8,9 @@ export const data = [
   },
   {
     name: "Vladimir Huy",
-    elo: 1150,
+    elo: 800,
     location: "Nghi Trường",
-    badge: "Legendary",
+    badge: "Challenger",
     img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fill:529:543:1/mb:2097152/plain/https://cdn.mezon.ai/0/1840683727907196928/1810223235401257000/1752575386989_image.png",
   },
   {
@@ -163,4 +163,4 @@ export const data = [
     badge: "Rising Star",
     img: "https://imgproxy.mezon.ai/K0YUZRIosDOcz5lY6qrgC6UIXmQgWzLjZv7VJ1RAA8c/rs:fit:100:100:1/mb:2097152/plain/https://cdn.mezon.vn/1779484504377790464/1833699295371464704/1833682843671203800/748_undefinedIMG_3686__1_.jpg@webp",
   },
-];
+].sort((a, b) => b.elo - a.elo);

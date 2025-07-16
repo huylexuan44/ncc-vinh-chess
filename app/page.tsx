@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useState, useEffect } from "react";
+import { Suspense, useRef, useState, useEffect, memo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -741,6 +741,8 @@ function Scene3D() {
   );
 }
 
+const MemoScene3D = memo(Scene3D);
+
 function GlobalLoading() {
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 z-50 flex items-center justify-center">
@@ -887,7 +889,7 @@ export default function ChessTournamentPage() {
 
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <Scene3D />
+          <MemoScene3D />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
@@ -942,7 +944,9 @@ export default function ChessTournamentPage() {
             <p className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 mb-8 pt-4">
               <div className="flex items-center justify-center gap-3">
                 <Users className="w-5 h-5 text-indigo-400" />
-                <span className="text-white/80">Tổng số tuyển đăng kí tham gia giải hiện tại:</span>
+                <span className="text-white/80">
+                  Tổng số tuyển đăng kí tham gia giải hiện tại:
+                </span>
                 <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
                   {data.length} kỳ thủ
                 </Badge>
@@ -951,49 +955,48 @@ export default function ChessTournamentPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {data
-              .sort((a, b) => b.elo - a.elo)
-              .map((player, index) => (
-                <Card
-                  key={index}
-                  className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25 group"
-                >
-                  <CardHeader className="text-center pb-2">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
-                      <img
-                        className="w-full h-full object-cover rounded-full"
-                        src={player.img || "/placeholder.svg"}
-                        alt={player.name}
-                      />
-                    </div>
-                    <CardTitle className="text-sm sm:text-lg">
-                      {player.name}
-                    </CardTitle>
-                    <Badge
-                      className={`text-xs ${
-                        player.badge === "World Champion"
-                          ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
-                          : player.badge === "Speed Master"
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                          : player.badge === "Challenger"
-                          ? "bg-gradient-to-r from-green-500 to-teal-500 text-white"
-                          : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
-                      }`}
-                    >
-                      {(player.badge === "World Champion" || player.badge === "Legendary") && (
-                        <Crown className="w-3 h-3 mr-1" />
-                      )}
-                      {player.badge}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent className="text-center text-xs sm:text-sm">
-                    <p className="text-indigo-300 font-semibold">
-                      ELO: {player.elo}
-                    </p>
-                    <p className="text-white/70">{player.location}</p>
-                  </CardContent>
-                </Card>
-              ))}
+            {data.map((player, index) => (
+              <Card
+                key={index}
+                className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25 group"
+              >
+                <CardHeader className="text-center pb-2">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
+                    <img
+                      className="w-full h-full object-cover rounded-full"
+                      src={player.img || "/placeholder.svg"}
+                      alt={player.name}
+                    />
+                  </div>
+                  <CardTitle className="text-sm sm:text-lg">
+                    {player.name}
+                  </CardTitle>
+                  <Badge
+                    className={`text-xs ${
+                      player.badge === "World Champion"
+                        ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
+                        : player.badge === "Speed Master"
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                        : player.badge === "Challenger"
+                        ? "bg-gradient-to-r from-green-500 to-teal-500 text-white"
+                        : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
+                    }`}
+                  >
+                    {(player.badge === "World Champion" ||
+                      player.badge === "Legendary") && (
+                      <Crown className="w-3 h-3 mr-1" />
+                    )}
+                    {player.badge}
+                  </Badge>
+                </CardHeader>
+                <CardContent className="text-center text-xs sm:text-sm">
+                  <p className="text-indigo-300 font-semibold">
+                    ELO: {player.elo}
+                  </p>
+                  <p className="text-white/70">{player.location}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
