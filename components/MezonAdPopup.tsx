@@ -34,7 +34,7 @@ export const MezonAdPopup: React.FC<MezonAdPopupProps> = ({
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <div
         ref={popupRef}
-        className="relative bg-[#36393f] rounded-lg shadow-2xl border border-[#4f545c] p-6 max-w-sm w-full mx-4 text-center transform transition-all hover:scale-[1.01] cursor-pointer group"
+        className="relative bg-[#36393f] rounded-lg shadow-2xl border border-[#4f545c] p-6 max-w-sm w-full mx-4 text-center group"
         onClick={(e) => {
           if ((e.target as HTMLElement).closest("button")) return;
           setShowIframe(true);
@@ -65,28 +65,35 @@ export const MezonAdPopup: React.FC<MezonAdPopupProps> = ({
             </div>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 flex flex-col items-center">
             <h3 className="font-semibold text-lg text-[#dcddde] leading-tight">
               Theo dõi các trận đấu tại
             </h3>
-            <div className="flex items-center justify-center gap-1.5">
-              <span className="text-xl font-bold bg-gradient-to-r from-[#5865f2] to-[#4752c4] bg-clip-text text-transparent">
+            <a
+              href="https://mezon.ai/"
+              target="_blank"
+              className="flex items-center justify-center gap-1.5 w-fit group/link"
+              onClick={() => {
+                onClose();
+              }}
+            >
+              <span className="text-xl font-bold bg-gradient-to-r from-[#5865f2] to-[#4752c4] bg-clip-text text-transparent group-hover/link:from-[#6370ff] group-hover/link:to-[#4e5add] transition-all">
                 Mezon
               </span>
-              <Users className="w-4 h-4 text-[#5865f2]" />
-            </div>
+              <Users className="w-4 h-4 text-[#5865f2] group-hover/link:text-[#6370ff] transition-all" />
+            </a>
           </div>
 
           <p className="text-[#b9bbbe] text-sm leading-relaxed max-w-xs">
             Tham gia cộng đồng game thủ và xem các trận đấu esports hấp dẫn nhất
           </p>
 
-          <div className="flex items-center gap-2 text-xs text-[#72767d] bg-[#2f3136] px-3 py-1.5 rounded-md border border-[#4f545c]">
+          <div className="flex items-center gap-2 text-xs text-[#797d85] hover:text-[#989da7] bg-[#2f3136] hover:bg-[#2d2e31] hover:font-[450] px-3 py-1.5 rounded-md border border-[#4f545c] transform transition-all hover:scale-[1.05]">
             <div className="w-1.5 h-1.5 bg-[#5865f2] rounded-full animate-pulse"></div>
             <a
               href="https://mezon.ai/"
               target="_blank"
-              onClick={(e) => {
+              onClick={() => {
                 onClose();
               }}
             >
@@ -95,7 +102,7 @@ export const MezonAdPopup: React.FC<MezonAdPopupProps> = ({
           </div>
         </div>
 
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#5865f2]/10 to-[#4752c4]/10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#5865f2]/10 to-[#4752c4]/10 pointer-events-none opacity-0"></div>
       </div>
     </div>
   );
