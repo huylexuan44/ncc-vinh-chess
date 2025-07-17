@@ -10,7 +10,6 @@ import {
   MeshDistortMaterial,
   Stars,
 } from "@react-three/drei";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -27,21 +26,17 @@ import Link from "next/link";
 import { ChessLogo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
 import { ChessPiece } from "@/components/chess-piece";
+import QRRegistration from "@/components/qr-registration";
 import { data } from "@/data/data";
-import { cn } from "@/lib/utils";
-import { sponsors } from "@/data/sponsors";
-import { MezonAdPopup } from "@/components/MezonAdPopup";
 import * as THREE from "three";
 
-function AnimatedSphere({
-  position,
-  color,
-  scale = 1,
-}: {
+interface AnimatedSphereProps {
   position: [number, number, number];
   color: string;
   scale?: number;
-}) {
+}
+
+function AnimatedSphere({ position, color, scale = 1 }: AnimatedSphereProps) {
   const meshRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
@@ -63,17 +58,14 @@ function AnimatedSphere({
   );
 }
 
-function FlyingDragon({
-  position,
-  scale = 1,
-  speed = 1,
-  color = "#DC2626",
-}: {
+interface FlyingDragonProps {
   position: [number, number, number];
   scale?: number;
   speed?: number;
   color?: string;
-}) {
+}
+
+function FlyingDragon({ position, scale = 1, speed = 1, color = "#DC2626" }: FlyingDragonProps) {
   const dragonRef = useRef<THREE.Group>(null);
   const wingLeftRef = useRef<THREE.Group>(null);
   const wingRightRef = useRef<THREE.Group>(null);
@@ -373,13 +365,12 @@ function FlyingDragon({
   );
 }
 
-function DragonTrail({
-  position,
-  scale = 1,
-}: {
+interface DragonTrailProps {
   position: [number, number, number];
   scale?: number;
-}) {
+}
+
+function DragonTrail({ position, scale = 1 }: DragonTrailProps) {
   const trailRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -410,15 +401,13 @@ function DragonTrail({
   );
 }
 
-function MagicalDragon({
-  position,
-  scale = 1,
-  speed = 1,
-}: {
+interface MagicalDragonProps {
   position: [number, number, number];
   scale?: number;
   speed?: number;
-}) {
+}
+
+function MagicalDragon({ position, scale = 1, speed = 1 }: MagicalDragonProps) {
   const dragonRef = useRef<THREE.Group>(null);
   const auraRef = useRef<THREE.Mesh>(null);
 
@@ -1358,53 +1347,46 @@ export default function ChessTournamentPage() {
           </div>
         </section>
 
-        <section
-          id="register"
-          className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
-        >
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 sm:mb-8 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Đăng ký tham gia
-            </h2>
-            <p className="text-lg sm:text-xl text-white/80 mb-6 sm:mb-8">
-              Đừng bỏ lỡ cơ hội tham gia giải đấu cờ vua lớn nhất tháng!
-            </p>
-
-            <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white">
-              <CardContent className="p-6 sm:p-8">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-4">
-                      Điều kiện tham gia:
-                    </h3>
-                    <ul className="text-left space-y-2 text-white/90 text-sm sm:text-base">
-                      <li>• ELO tối thiểu: 400</li>
-                      <li>• Lệ phí đăng ký: $50,000</li>
-                      <li>• Hạn đăng ký: 19/07/2025</li>
-                      <li>• Giới hạn: 256 kỳ thủ</li>
-                    </ul>
-                  </div>
-
-                  <div className="pt-6 border-t border-indigo-500/30">
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg shadow-indigo-500/25 border-0 w-full sm:w-auto"
-                      onClick={() => {
-                        alert("Vui lòng chờ đến ngày 19/7/2025");
-                      }}
-                    >
-                      <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                      Đăng ký ngay
-                    </Button>
-                    <p className="text-xs sm:text-sm text-white/60 mt-4">
-                      Còn lại nhiều suất đăng ký
-                    </p>
+      <section
+        id="register"
+        className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
+      >
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white">
+            <CardContent className="p-6 sm:p-8">
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-4">
+                    Điều kiện tham gia:
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm sm:text-base">
+                    <div className="bg-indigo-800/30 rounded-lg p-3">
+                      <div className="font-semibold text-indigo-300">ELO tối thiểu</div>
+                      <div className="text-white">400</div>
+                    </div>
+                    <div className="bg-purple-800/30 rounded-lg p-3">
+                      <div className="font-semibold text-purple-300">Lệ phí</div>
+                      <div className="text-white">$50,000</div>
+                    </div>
+                    <div className="bg-pink-800/30 rounded-lg p-3">
+                      <div className="font-semibold text-pink-300">Hạn đăng ký</div>
+                      <div className="text-white">19/7/2025</div>
+                    </div>
+                    <div className="bg-indigo-800/30 rounded-lg p-3">
+                      <div className="font-semibold text-indigo-300">Giới hạn</div>
+                      <div className="text-white">256 kỳ thủ</div>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+
+                <div className="border-t border-indigo-500/30 pt-8">
+                  <QRRegistration />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
 
         {/* Footer */}
         <footer className="py-8 sm:py-12 px-4 border-t border-indigo-500/20 bg-black/30 backdrop-blur-sm">
