@@ -950,7 +950,7 @@ export default function ChessTournamentPage() {
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl leading-tight">
               CHESS NCC VINH
             </h1>
-            <p className="text-base sm:text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto drop-shadow-lg">
+            <p className="text-base sm:text-xl md:text-xl mb-8 text-white/90 max-w-2xl mx-auto drop-shadow-lg">
               Tham gia giải đấu cờ vua lớn nhất tháng với tổng giải thưởng lên
               đến 1,000,000 $
             </p>
