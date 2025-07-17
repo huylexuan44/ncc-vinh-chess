@@ -1061,15 +1061,32 @@ export default function ChessTournamentPage() {
                     </div>
                     <p
                       className={cn(
-                        "text-xl sm:text-2xl font-bold bg-clip-text text-transparent mt-2",
-                        item.className
+                        "text-xl sm:text-2xl font-bold bg-clip-text text-transparent mt-2 bg-gradient-to-r",
+                        item.type === 1
+                          ? "from-cyan-300 to-blue-400"
+                          : item.type === 2
+                          ? "from-yellow-300 to-yellow-500"
+                          : item.type === 3
+                          ? "from-gray-300 to-gray-500"
+                          : "from-amber-600 to-amber-800"
                       )}
                     >
                       {item.name}
                     </p>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <CardTitle className={cn(["text-[18px]", item.color])}>
+                    <CardTitle
+                      className={cn([
+                        "text-[18px]",
+                        item.type === 1
+                          ? "text-cyan-400"
+                          : item.type === 2
+                          ? "text-yellow-400"
+                          : item.type === 3
+                          ? "text-gray-300"
+                          : "text-amber-700",
+                      ])}
+                    >
                       {item.value}
                     </CardTitle>
                     <p className="text-white/80 text-sm mt-2">
