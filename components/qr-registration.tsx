@@ -30,14 +30,14 @@ export default function QRRegistration() {
     
     try {
       // Fetch QR codes
-      const qrResponse = await fetch("http://localhost:5100/api/chess/code/qr");
+      const qrResponse = await fetch("http://chess.nccsoft.vn/api/chess/code/qr");
       if (!qrResponse.ok) {
         throw new Error(`HTTP error! status: ${qrResponse.status}`);
       }
       const qrData = await qrResponse.json();
       
       // Fetch statistics
-      const statResponse = await fetch("http://localhost:5100/api/chess/statistic");
+      const statResponse = await fetch("http://chess.nccsoft.vn/api/chess/statistic");
       if (!statResponse.ok) {
         throw new Error(`HTTP error! status: ${statResponse.status}`);
       }
