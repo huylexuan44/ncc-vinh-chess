@@ -30,9 +30,19 @@ import { ChessPiece } from "@/components/chess-piece";
 import { data } from "@/data/data";
 import { cn } from "@/lib/utils";
 import { sponsors } from "@/data/sponsors";
+import { MezonAdPopup } from "@/components/MezonAdPopup";
+import * as THREE from "three";
 
-function AnimatedSphere({ position, color, scale = 1 }) {
-  const meshRef = useRef(null);
+function AnimatedSphere({
+  position,
+  color,
+  scale = 1,
+}: {
+  position: [number, number, number];
+  color: string;
+  scale?: number;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -53,12 +63,22 @@ function AnimatedSphere({ position, color, scale = 1 }) {
   );
 }
 
-function FlyingDragon({ position, scale = 1, speed = 1, color = "#DC2626" }) {
-  const dragonRef = useRef(null);
-  const wingLeftRef = useRef(null);
-  const wingRightRef = useRef(null);
-  const tailRef = useRef(null);
-  const neckRef = useRef(null);
+function FlyingDragon({
+  position,
+  scale = 1,
+  speed = 1,
+  color = "#DC2626",
+}: {
+  position: [number, number, number];
+  scale?: number;
+  speed?: number;
+  color?: string;
+}) {
+  const dragonRef = useRef<THREE.Group>(null);
+  const wingLeftRef = useRef<THREE.Group>(null);
+  const wingRightRef = useRef<THREE.Group>(null);
+  const tailRef = useRef<THREE.Group>(null);
+  const neckRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (dragonRef.current) {
@@ -353,8 +373,14 @@ function FlyingDragon({ position, scale = 1, speed = 1, color = "#DC2626" }) {
   );
 }
 
-function DragonTrail({ position, scale = 1 }) {
-  const trailRef = useRef(null);
+function DragonTrail({
+  position,
+  scale = 1,
+}: {
+  position: [number, number, number];
+  scale?: number;
+}) {
+  const trailRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (trailRef.current) {
@@ -384,9 +410,17 @@ function DragonTrail({ position, scale = 1 }) {
   );
 }
 
-function MagicalDragon({ position, scale = 1, speed = 1 }) {
-  const dragonRef = useRef(null);
-  const auraRef = useRef(null);
+function MagicalDragon({
+  position,
+  scale = 1,
+  speed = 1,
+}: {
+  position: [number, number, number];
+  scale?: number;
+  speed?: number;
+}) {
+  const dragonRef = useRef<THREE.Group>(null);
+  const auraRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     if (dragonRef.current) {
@@ -745,9 +779,12 @@ function Scene3D() {
 
 const MemoScene3D = memo(Scene3D);
 
-function GlobalLoading() {
+function GlobalLoading({ isLoading }: { isLoading: boolean }) {
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 z-50 flex items-center justify-center"
+      style={{ display: isLoading ? "flex" : "none" }}
+    >
       <div className="text-center">
         <div className="relative">
           <div className="w-20 h-20 mx-auto mb-8 relative">
@@ -782,9 +819,7 @@ function GlobalLoading() {
 
 export default function ChessTournamentPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [isVideoVisible, setIsVideoVisible] = useState(false);
-  const videoSectionRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [showAd, setShowAd] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -794,619 +829,606 @@ export default function ChessTournamentPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVideoVisible(true);
-        } else {
-          setIsVideoVisible(false);
-          if (iframeRef.current) {
-            const currentSrc = iframeRef.current.src;
-            if (currentSrc.includes("autoplay=1")) {
-              iframeRef.current.src = currentSrc.replace(
-                "autoplay=1",
-                "autoplay=0"
-              );
-            }
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: "0px",
-        threshold: 0.3,
-      }
-    );
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
-    if (videoSectionRef.current) {
-      observer.observe(videoSectionRef.current);
-    }
+  // Phát hiện tương tác đầu tiên của user
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setHasUserInteracted(true);
+      // Loại bỏ event listeners sau khi user đã tương tác
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("scroll", handleUserInteraction);
+      document.removeEventListener("keydown", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
+    };
+
+    // Thêm event listeners cho các loại tương tác
+    document.addEventListener("click", handleUserInteraction);
+    document.addEventListener("scroll", handleUserInteraction);
+    document.addEventListener("keydown", handleUserInteraction);
+    document.addEventListener("touchstart", handleUserInteraction);
 
     return () => {
-      if (videoSectionRef.current) {
-        observer.unobserve(videoSectionRef.current);
-      }
+      // Cleanup event listeners
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("scroll", handleUserInteraction);
+      document.removeEventListener("keydown", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
     };
   }, []);
 
-  useEffect(() => {
-    if (isVideoVisible && iframeRef.current) {
-      const baseUrl =
-        "https://www.youtube.com/embed/r6zIGXun57U?si=QxkoXk6nhLVOJMe1";
-      const params = "autoplay=1&mute=0&controls=1";
-      iframeRef.current.src = `${baseUrl}&${params}`;
-    }
-  }, [isVideoVisible]);
-
-  if (isLoading) {
-    return <GlobalLoading />;
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
-      <header className="sticky top-0 z-10 px-3 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between backdrop-blur-sm bg-black/30 border-b border-indigo-500/20">
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <ChessLogo className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
-          <span className="text-white font-bold text-sm sm:text-lg lg:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            Chess NCC Vinh
-          </span>
-        </div>
-
-        <nav className="hidden md:flex gap-4 lg:gap-6">
-          <Link
-            href="#tournament"
-            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
-          >
-            Giải đấu
-          </Link>
-          <Link
-            href="#players"
-            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
-          >
-            Tuyển thủ
-          </Link>
-          <Link
-            href="#sponsors"
-            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
-          >
-            Nhà tài trợ
-          </Link>
-          <Link
-            href="#schedule"
-            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
-          >
-            Lịch thi đấu
-          </Link>
-          <Link
-            href="#prizes"
-            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
-          >
-            Giải thưởng
-          </Link>
-          <Link
-            href="#register"
-            className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
-          >
-            Đăng ký
-          </Link>
-        </nav>
-
-        <MobileNav />
-      </header>
-
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <MemoScene3D />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-10 left-10 text-4xl sm:text-6xl lg:text-8xl text-red-500/20 animate-pulse">
-            🐉
-          </div>
-          <div className="absolute top-20 right-20 text-3xl sm:text-5xl lg:text-7xl text-red-600/20 animate-bounce">
-            🐲
-          </div>
-          <div className="absolute bottom-20 left-20 text-5xl sm:text-7xl lg:text-9xl text-orange-500/20 animate-pulse">
-            🐉
-          </div>
-          <div className="absolute bottom-10 right-10 text-2xl sm:text-4xl lg:text-6xl text-red-400/20 animate-bounce">
-            🐲
-          </div>
-          <div className="absolute top-1/2 left-5 text-4xl sm:text-6xl lg:text-8xl text-red-500/20 animate-pulse">
-            🐉
-          </div>
-          <div className="absolute top-1/3 right-5 text-3xl sm:text-5xl lg:text-7xl text-orange-600/20 animate-bounce">
-            🐲
-          </div>
-        </div>
-
-        <div className="relative z-10 text-center text-white px-4">
-          <Badge className="mb-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold border-0 shadow-lg shadow-indigo-500/25 text-xs sm:text-sm">
-            <Trophy className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-            GIẢI ĐẤU CỜ VUA QUỐC TẾ 2025
-          </Badge>
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl leading-tight">
-            CHESS NCC VINH
-          </h1>
-          <p className="text-base sm:text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto drop-shadow-lg">
-            Tham gia giải đấu cờ vua lớn nhất tháng với tổng giải thưởng lên đến
-            1,000,000 $
-          </p>
-        </div>
-      </section>
-
-      <section
-        id="players"
-        className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
-      >
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Tuyển thủ hàng đầu
-            </h2>
-            <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto pb-4">
-              Những cao thủ cờ vua xuất sắc nhất xóm sẽ tranh tài tại giải đấu
-            </p>
-            <p className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 mb-8 pt-4">
-              <div className="flex items-center justify-center gap-3">
-                <Users className="w-5 h-5 text-indigo-400" />
-                <span className="text-white/80">
-                  Tổng số tuyển đăng kí tham gia giải hiện tại:
-                </span>
-                <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
-                  {data.length} kỳ thủ
-                </Badge>
-              </div>
-            </p>
+    <>
+      <GlobalLoading isLoading={isLoading} />
+      <MezonAdPopup
+        open={showAd && !isLoading}
+        onClose={() => setShowAd(false)}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
+        <header className="sticky top-0 z-10 px-3 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between backdrop-blur-sm bg-black/30 border-b border-indigo-500/20">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <ChessLogo className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
+            <span className="text-white font-bold text-sm sm:text-lg lg:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Chess NCC Vinh
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {data.map((player, index) => (
-              <Card
-                key={index}
-                className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25 group"
-              >
-                <CardHeader className="text-center pb-2">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
-                    <img
-                      className="w-full h-full object-cover rounded-full"
-                      src={player.img || "/placeholder.svg"}
-                      alt={player.name}
-                    />
-                  </div>
-                  <CardTitle className="text-sm sm:text-lg">
-                    {player.name}
-                  </CardTitle>
-                  <Badge
-                    className={`text-xs ${
-                      player.badge === "World Champion"
-                        ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
-                        : player.badge === "Speed Master"
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                        : player.badge === "Challenger"
-                        ? "bg-gradient-to-r from-green-500 to-teal-500 text-white"
-                        : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
-                    }`}
-                  >
-                    {(player.badge === "World Champion" ||
-                      player.badge === "Legendary") && (
-                      <Crown className="w-3 h-3 mr-1" />
-                    )}
-                    {player.badge}
-                  </Badge>
-                </CardHeader>
-                <CardContent className="text-center text-xs sm:text-sm">
-                  <p className="text-indigo-300 font-semibold">
-                    ELO: {player.elo}
-                  </p>
-                  <p className="text-white/70">{player.location}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="sponsors" className="py-12 sm:py-20 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <nav className="hidden md:flex gap-4 lg:gap-6">
+            <Link
+              href="#tournament"
+              className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+            >
+              Giải đấu
+            </Link>
+            <Link
+              href="#players"
+              className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+            >
+              Tuyển thủ
+            </Link>
+            <Link
+              href="#sponsors"
+              className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+            >
               Nhà tài trợ
-            </h2>
-            <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
-              Chúng tôi xin gửi lời cảm ơn sâu sắc tới các nhà tài trợ đã đồng
-              hành cùng giải đấu Chess NCC Vinh 2025. Sự hỗ trợ quý báu của các
-              đơn vị tài trợ là động lực lớn giúp giải đấu diễn ra thành công,
-              góp phần phát triển phong trào cờ vua và tạo cơ hội cho các kỳ thủ
-              trẻ tỏa sáng.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
-            {sponsors.map((item, index) => (
-              <Card
-                key={index}
-                className={cn(
-                  "bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25"
-                )}
-              >
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
-                    <img
-                      className="w-full h-full object-cover rounded-full"
-                      src={item.img || "/placeholder.svg"}
-                      alt={item.name}
-                    />
-                  </div>
-                  <p
-                    className={cn(
-                      "text-xl sm:text-2xl font-bold bg-clip-text text-transparent mt-2",
-                      item.className
-                    )}
-                  >
-                    {item.name}
-                  </p>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <CardTitle className={cn(["text-[18px]", item.color])}>
-                    {item.value}
-                  </CardTitle>
-                  <p className="text-white/80 text-sm mt-2">
-                    {item.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+            </Link>
+            <Link
+              href="#schedule"
+              className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+            >
+              Lịch thi đấu
+            </Link>
+            <Link
+              href="#prizes"
+              className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+            >
+              Giải thưởng
+            </Link>
+            <Link
+              href="#register"
+              className="text-white/80 hover:text-indigo-300 text-sm lg:text-base font-medium transition-colors"
+            >
+              Đăng ký
+            </Link>
+          </nav>
 
-      <section
-        ref={videoSectionRef}
-        className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
-      >
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Video giới thiệu
-            </h2>
-            <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto">
-              Khám phá sự hấp dẫn của giải đấu cờ vua Chess NCC Vinh
-            </p>
-          </div>
+          <MobileNav />
+        </header>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-indigo-500/25 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border border-indigo-500/30">
-            <div className="aspect-video w-full">
-              <iframe
-                ref={iframeRef}
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/r6zIGXun57U?si=QxkoXk6nhLVOJMe1&autoplay=0&mute=0&controls=1"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="rounded-2xl"
-              />
+        <section className="relative h-screen flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0">
+            <MemoScene3D />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-10 left-10 text-4xl sm:text-6xl lg:text-8xl text-red-500/20 animate-pulse">
+              🐉
+            </div>
+            <div className="absolute top-20 right-20 text-3xl sm:text-5xl lg:text-7xl text-red-600/20 animate-bounce">
+              🐲
+            </div>
+            <div className="absolute bottom-20 left-20 text-5xl sm:text-7xl lg:text-9xl text-orange-500/20 animate-pulse">
+              🐉
+            </div>
+            <div className="absolute bottom-10 right-10 text-2xl sm:text-4xl lg:text-6xl text-red-400/20 animate-bounce">
+              🐲
+            </div>
+            <div className="absolute top-1/2 left-5 text-4xl sm:text-6xl lg:text-8xl text-red-500/20 animate-pulse">
+              🐉
+            </div>
+            <div className="absolute top-1/3 right-5 text-3xl sm:text-5xl lg:text-7xl text-orange-600/20 animate-bounce">
+              🐲
             </div>
           </div>
-        </div>
-      </section>
 
-      <section id="tournament" className="py-12 sm:py-20 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Thông tin giải đấu
-            </h2>
-            <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto">
-              Giải đấu cờ vua chuyên nghiệp với sự tham gia của các cao thủ từ
-              khắp nơi trên thế giới
+          <div className="relative z-10 text-center text-white px-4">
+            <Badge className="mb-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold border-0 shadow-lg shadow-indigo-500/25 text-xs sm:text-sm">
+              <Trophy className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+              GIẢI ĐẤU CỜ VUA QUỐC TẾ 2025
+            </Badge>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl leading-tight">
+              CHESS NCC VINH
+            </h1>
+            <p className="text-base sm:text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto drop-shadow-lg">
+              Tham gia giải đấu cờ vua lớn nhất tháng với tổng giải thưởng lên
+              đến 1,000,000 $
             </p>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
-            {[
-              {
-                icon: Calendar,
-                title: "Thời gian",
-                value: "20-31/7",
-                subtitle: "2025",
-              },
-              {
-                icon: MapPin,
-                title: "Địa điểm",
-                value: "Phòng Boxing Bến Thượng Hải",
-                subtitle: "VP Vinh",
-              },
-              {
-                icon: Users,
-                title: "Số lượng lên đến",
-                value: "256",
-                subtitle: "Kỳ thủ",
-              },
-              {
-                icon: Trophy,
-                title: "Giải thưởng",
-                value: "$1M",
-                subtitle: "Tổng giải thưởng",
-              },
-            ].map((item, index) => (
-              <Card
-                key={index}
-                className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25"
-              >
-                <CardHeader className="text-center">
-                  <item.icon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 text-indigo-400" />
-                  <CardTitle className="text-sm sm:text-base">
-                    {item.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                    {item.value}
-                  </p>
-                  <p className="text-white/80 text-sm">{item.subtitle}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+        <section
+          id="players"
+          className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
+        >
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Tuyển thủ hàng đầu
+              </h2>
+              <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto pb-4">
+                Những cao thủ cờ vua xuất sắc nhất xóm sẽ tranh tài tại giải đấu
+              </p>
+              <div className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 mb-8 pt-4">
+                <div className="flex items-center justify-center gap-3">
+                  <Users className="w-5 h-5 text-indigo-400" />
+                  <span className="text-white/80">
+                    Tổng số tuyển đăng kí tham gia giải hiện tại:
+                  </span>
+                  <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
+                    {data.length} kỳ thủ
+                  </Badge>
+                </div>
+              </div>
+            </div>
 
-      <section
-        id="schedule"
-        className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
-      >
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Lịch thi đấu
-            </h2>
-          </div>
-
-          <div className="space-y-4 sm:space-y-6">
-            {[
-              {
-                date: "20/07/2025",
-                title: "Ngày 1",
-                badge: "Vòng loại",
-                events: [
-                  "09:00 - 12:00: Vòng loại bảng A-D",
-                  "14:00 - 17:00: Vòng loại bảng E-H",
-                  "19:00 - 20:00: Lễ khai mạc",
-                ],
-              },
-              {
-                date: "21/07/2025",
-                title: "Ngày 2",
-                badge: "Vòng knock-out",
-                events: [
-                  "09:00 - 12:00: Vòng 1/8",
-                  "14:00 - 17:00: Tứ kết",
-                  "19:00 - 21:00: Bán kết",
-                ],
-              },
-              {
-                date: "22/07/2025",
-                title: "Ngày 3",
-                badge: "Chung kết",
-                events: [
-                  "15:00 - 18:00: Trận chung kết",
-                  "19:00 - 20:30: Lễ trao giải",
-                ],
-                isFinale: true,
-              },
-            ].map((day, index) => (
-              <Card
-                key={index}
-                className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-[1.02] transition-all duration-300"
-              >
-                <CardHeader>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" />
-                      {day.title} - {day.date}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {data.map((player, index) => (
+                <Card
+                  key={index}
+                  className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25 group"
+                >
+                  <CardHeader className="text-center pb-2">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
+                      <img
+                        className="w-full h-full object-cover rounded-full"
+                        src={player.img || "/placeholder.svg"}
+                        alt={player.name}
+                      />
+                    </div>
+                    <CardTitle className="text-sm sm:text-lg">
+                      {player.name}
                     </CardTitle>
                     <Badge
-                      className={`${
-                        day.isFinale
+                      className={`text-xs ${
+                        player.badge === "World Champion"
                           ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
-                          : index === 1
-                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                          : "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                      } border-0 text-xs`}
+                          : player.badge === "Speed Master"
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                          : player.badge === "Challenger"
+                          ? "bg-gradient-to-r from-green-500 to-teal-500 text-white"
+                          : "bg-gradient-to-r from-red-500 to-pink-500 text-white"
+                      }`}
                     >
-                      {day.isFinale && <Crown className="w-3 h-3 mr-1" />}
-                      {day.badge}
+                      {(player.badge === "World Champion" ||
+                        player.badge === "Legendary") && (
+                        <Crown className="w-3 h-3 mr-1" />
+                      )}
+                      {player.badge}
                     </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {day.events.map((event, eventIndex) => (
-                      <p key={eventIndex} className="text-sm sm:text-base">
-                        <strong>{event.split(":")[0]}:</strong>{" "}
-                        {event.split(":").slice(1).join(":")}
-                      </p>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardHeader>
+                  <CardContent className="text-center text-xs sm:text-sm">
+                    <p className="text-indigo-300 font-semibold">
+                      ELO: {player.elo}
+                    </p>
+                    <p className="text-white/70">{player.location}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="prizes" className="py-12 sm:py-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Giải thưởng
-            </h2>
-            <p className="text-lg sm:text-xl text-white/80">
-              Tổng giải thưởng lên đến 1,000,000 USD
-            </p>
+        <section id="sponsors" className="py-12 sm:py-20 px-4 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Nhà tài trợ
+              </h2>
+              <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
+                Chúng tôi xin gửi lời cảm ơn sâu sắc tới các nhà tài trợ đã đồng
+                hành cùng giải đấu Chess NCC Vinh 2025. Sự hỗ trợ quý báu của
+                các đơn vị tài trợ là động lực lớn giúp giải đấu diễn ra thành
+                công, góp phần phát triển phong trào cờ vua và tạo cơ hội cho
+                các kỳ thủ trẻ tỏa sáng.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+              {sponsors.map((item, index) => (
+                <Card
+                  key={index}
+                  className={cn(
+                    "bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25"
+                  )}
+                >
+                  <CardHeader className="text-center">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-bold overflow-hidden group-hover:scale-110 transition-transform">
+                      <img
+                        className="w-full h-full object-cover rounded-full"
+                        src={item.img || "/placeholder.svg"}
+                        alt={item.name}
+                      />
+                    </div>
+                    <p
+                      className={cn(
+                        "text-xl sm:text-2xl font-bold bg-clip-text text-transparent mt-2",
+                        item.className
+                      )}
+                    >
+                      {item.name}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <CardTitle className={cn(["text-[18px]", item.color])}>
+                      {item.value}
+                    </CardTitle>
+                    <p className="text-white/80 text-sm mt-2">
+                      {item.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            {[
-              {
-                title: "Vô địch",
-                prize: "$500,000",
-                desc: "+ Cúp vàng + Danh hiệu Grandmaster",
-                gradient: "from-yellow-400 to-orange-500",
-                icon: Trophy,
-                iconColor: "text-yellow-500",
-              },
-              {
-                title: "Á quân",
-                prize: "$250,000",
-                desc: "+ Cúp bạc + Chứng nhận",
-                gradient: "from-gray-300 to-gray-500",
-                icon: Star,
-                iconColor: "text-gray-500",
-              },
-              {
-                title: "Hạng 3",
-                prize: "$150,000",
-                desc: "+ Cúp đồng + Chứng nhận",
-                gradient: "from-amber-600 to-amber-800",
-                icon: Star,
-                iconColor: "text-amber-600",
-              },
-            ].map((prize, index) => (
-              <Card
-                key={index}
-                className={`bg-gradient-to-br ${prize.gradient} ${
-                  index === 0
-                    ? "text-black"
-                    : index === 1
-                    ? "text-black"
-                    : "text-white"
-                } transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}
-              >
-                <CardHeader className="text-center">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-lg">
-                    <prize.icon
-                      className={`w-6 h-6 sm:w-8 sm:h-8 ${prize.iconColor}`}
-                    />
-                  </div>
-                  <CardTitle className="text-lg sm:text-2xl">
-                    {prize.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-2xl sm:text-4xl font-bold mb-2">
-                    {prize.prize}
+        <section className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Video giới thiệu
+              </h2>
+              <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto">
+                Khám phá sự hấp dẫn của giải đấu cờ vua Chess NCC Vinh
+              </p>
+            </div>
+
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-indigo-500/25 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border border-indigo-500/30">
+              <div className="aspect-video w-full pointer-events-none">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/r6zIGXun57U?si=QxkoXk6nhLVOJMe1${
+                    hasUserInteracted
+                      ? "&controls=0&modestbranding=1&rel=0&showinfo=0&autoplay=1&mute=0"
+                      : "&controls=0&modestbranding=1&rel=0&showinfo=0"
+                  }`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="rounded-2xl"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tournament" className="py-12 sm:py-20 px-4 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Thông tin giải đấu
+              </h2>
+              <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto">
+                Giải đấu cờ vua chuyên nghiệp với sự tham gia của các cao thủ từ
+                khắp nơi trên thế giới
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+              {[
+                {
+                  icon: Calendar,
+                  title: "Thời gian",
+                  value: "20-31/7",
+                  subtitle: "2025",
+                },
+                {
+                  icon: MapPin,
+                  title: "Địa điểm",
+                  value: "Phòng Boxing Bến Thượng Hải",
+                  subtitle: "VP Vinh",
+                },
+                {
+                  icon: Users,
+                  title: "Số lượng lên đến",
+                  value: "256",
+                  subtitle: "Kỳ thủ",
+                },
+                {
+                  icon: Trophy,
+                  title: "Giải thưởng",
+                  value: "$1M",
+                  subtitle: "Tổng giải thưởng",
+                },
+              ].map((item, index) => (
+                <Card
+                  key={index}
+                  className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/25"
+                >
+                  <CardHeader className="text-center">
+                    <item.icon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 text-indigo-400" />
+                    <CardTitle className="text-sm sm:text-base">
+                      {item.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                      {item.value}
+                    </p>
+                    <p className="text-white/80 text-sm">{item.subtitle}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="schedule"
+          className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
+        >
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Lịch thi đấu
+              </h2>
+            </div>
+
+            <div className="space-y-4 sm:space-y-6">
+              {[
+                {
+                  date: "20/07/2025",
+                  title: "Ngày 1",
+                  badge: "Vòng loại",
+                  events: [
+                    "09:00 - 12:00: Vòng loại bảng A-D",
+                    "14:00 - 17:00: Vòng loại bảng E-H",
+                    "19:00 - 20:00: Lễ khai mạc",
+                  ],
+                },
+                {
+                  date: "21/07/2025",
+                  title: "Ngày 2",
+                  badge: "Vòng knock-out",
+                  events: [
+                    "09:00 - 12:00: Vòng 1/8",
+                    "14:00 - 17:00: Tứ kết",
+                    "19:00 - 21:00: Bán kết",
+                  ],
+                },
+                {
+                  date: "22/07/2025",
+                  title: "Ngày 3",
+                  badge: "Chung kết",
+                  events: [
+                    "15:00 - 18:00: Trận chung kết",
+                    "19:00 - 20:30: Lễ trao giải",
+                  ],
+                  isFinale: true,
+                },
+              ].map((day, index) => (
+                <Card
+                  key={index}
+                  className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white transform hover:scale-[1.02] transition-all duration-300"
+                >
+                  <CardHeader>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" />
+                        {day.title} - {day.date}
+                      </CardTitle>
+                      <Badge
+                        className={`${
+                          day.isFinale
+                            ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
+                            : index === 1
+                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                            : "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                        } border-0 text-xs`}
+                      >
+                        {day.isFinale && <Crown className="w-3 h-3 mr-1" />}
+                        {day.badge}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {day.events.map((event, eventIndex) => (
+                        <p key={eventIndex} className="text-sm sm:text-base">
+                          <strong>{event.split(":")[0]}:</strong>{" "}
+                          {event.split(":").slice(1).join(":")}
+                        </p>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="prizes" className="py-12 sm:py-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Giải thưởng
+              </h2>
+              <p className="text-lg sm:text-xl text-white/80">
+                Tổng giải thưởng lên đến 1,000,000 USD
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              {[
+                {
+                  title: "Vô địch",
+                  prize: "$500,000",
+                  desc: "+ Cúp vàng + Danh hiệu Grandmaster",
+                  gradient: "from-yellow-400 to-orange-500",
+                  icon: Trophy,
+                  iconColor: "text-yellow-500",
+                },
+                {
+                  title: "Á quân",
+                  prize: "$250,000",
+                  desc: "+ Cúp bạc + Chứng nhận",
+                  gradient: "from-gray-300 to-gray-500",
+                  icon: Star,
+                  iconColor: "text-gray-500",
+                },
+                {
+                  title: "Hạng 3",
+                  prize: "$150,000",
+                  desc: "+ Cúp đồng + Chứng nhận",
+                  gradient: "from-amber-600 to-amber-800",
+                  icon: Star,
+                  iconColor: "text-amber-600",
+                },
+              ].map((prize, index) => (
+                <Card
+                  key={index}
+                  className={`bg-gradient-to-br ${prize.gradient} ${
+                    index === 0
+                      ? "text-black"
+                      : index === 1
+                      ? "text-black"
+                      : "text-white"
+                  } transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}
+                >
+                  <CardHeader className="text-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-lg">
+                      <prize.icon
+                        className={`w-6 h-6 sm:w-8 sm:h-8 ${prize.iconColor}`}
+                      />
+                    </div>
+                    <CardTitle className="text-lg sm:text-2xl">
+                      {prize.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-2xl sm:text-4xl font-bold mb-2">
+                      {prize.prize}
+                    </p>
+                    <p className="text-sm sm:text-base">{prize.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="mt-8 sm:mt-12 text-center">
+              <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white inline-block">
+                <CardContent className="p-4 sm:p-6">
+                  <p className="text-sm sm:text-lg">
+                    <strong>Giải thưởng khuyến khích:</strong> Top 4-8 mỗi người
+                    nhận $25,000
                   </p>
-                  <p className="text-sm sm:text-base">{prize.desc}</p>
                 </CardContent>
               </Card>
-            ))}
+            </div>
           </div>
+        </section>
 
-          <div className="mt-8 sm:mt-12 text-center">
-            <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white inline-block">
-              <CardContent className="p-4 sm:p-6">
-                <p className="text-sm sm:text-lg">
-                  <strong>Giải thưởng khuyến khích:</strong> Top 4-8 mỗi người
-                  nhận $25,000
-                </p>
+        <section
+          id="register"
+          className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
+        >
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 sm:mb-8 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Đăng ký tham gia
+            </h2>
+            <p className="text-lg sm:text-xl text-white/80 mb-6 sm:mb-8">
+              Đừng bỏ lỡ cơ hội tham gia giải đấu cờ vua lớn nhất tháng!
+            </p>
+
+            <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white">
+              <CardContent className="p-6 sm:p-8">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-4">
+                      Điều kiện tham gia:
+                    </h3>
+                    <ul className="text-left space-y-2 text-white/90 text-sm sm:text-base">
+                      <li>• ELO tối thiểu: 400</li>
+                      <li>• Lệ phí đăng ký: $50,000</li>
+                      <li>• Hạn đăng ký: 19/07/2025</li>
+                      <li>• Giới hạn: 256 kỳ thủ</li>
+                    </ul>
+                  </div>
+
+                  <div className="pt-6 border-t border-indigo-500/30">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg shadow-indigo-500/25 border-0 w-full sm:w-auto"
+                      onClick={() => {
+                        alert("Vui lòng chờ đến ngày 19/7/2025");
+                      }}
+                    >
+                      <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Đăng ký ngay
+                    </Button>
+                    <p className="text-xs sm:text-sm text-white/60 mt-4">
+                      Còn lại nhiều suất đăng ký
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section
-        id="register"
-        className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
-      >
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 sm:mb-8 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            Đăng ký tham gia
-          </h2>
-          <p className="text-lg sm:text-xl text-white/80 mb-6 sm:mb-8">
-            Đừng bỏ lỡ cơ hội tham gia giải đấu cờ vua lớn nhất tháng!
-          </p>
-
-          <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white">
-            <CardContent className="p-6 sm:p-8">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold mb-4">
-                    Điều kiện tham gia:
-                  </h3>
-                  <ul className="text-left space-y-2 text-white/90 text-sm sm:text-base">
-                    <li>• ELO tối thiểu: 400</li>
-                    <li>• Lệ phí đăng ký: $50,000</li>
-                    <li>• Hạn đăng ký: 19/07/2025</li>
-                    <li>• Giới hạn: 256 kỳ thủ</li>
-                  </ul>
-                </div>
-
-                <div className="pt-6 border-t border-indigo-500/30">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg shadow-indigo-500/25 border-0 w-full sm:w-auto"
-                    onClick={() => {
-                      alert("Vui lòng chờ đến ngày 19/7/2025");
-                    }}
-                  >
-                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Đăng ký ngay
-                  </Button>
-                  <p className="text-xs sm:text-sm text-white/60 mt-4">
-                    Còn lại nhiều suất đăng ký
-                  </p>
-                </div>
+        {/* Footer */}
+        <footer className="py-8 sm:py-12 px-4 border-t border-indigo-500/20 bg-black/30 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <ChessLogo className="w-8 h-8 sm:w-10 sm:h-10" />
+                <span className="text-white font-bold text-sm sm:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent text-center md:text-left">
+                  Chess NCC Vinh Tournament 2025
+                </span>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 sm:py-12 px-4 border-t border-indigo-500/20 bg-black/30 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <ChessLogo className="w-8 h-8 sm:w-10 sm:h-10" />
-              <span className="text-white font-bold text-sm sm:text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent text-center md:text-left">
-                Chess NCC Vinh Tournament 2025
-              </span>
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-white/60 text-sm">
+                <Link
+                  href="#"
+                  className="hover:text-indigo-300 transition-colors"
+                >
+                  Liên hệ
+                </Link>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-300 transition-colors"
+                >
+                  Điều khoản
+                </Link>
+                <Link
+                  href="#"
+                  className="hover:text-indigo-300 transition-colors"
+                >
+                  Quyền riêng tư
+                </Link>
+              </div>
             </div>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-white/60 text-sm">
-              <Link
-                href="#"
-                className="hover:text-indigo-300 transition-colors"
-              >
-                Liên hệ
-              </Link>
-              <Link
-                href="#"
-                className="hover:text-indigo-300 transition-colors"
-              >
-                Điều khoản
-              </Link>
-              <Link
-                href="#"
-                className="hover:text-indigo-300 transition-colors"
-              >
-                Quyền riêng tư
-              </Link>
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-indigo-500/20 text-center text-white/60 text-sm">
+              <p>
+                &copy; 2025 Chess NCC Vinh Tournament. Tất cả quyền được bảo
+                lưu.
+              </p>
             </div>
           </div>
-          <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-indigo-500/20 text-center text-white/60 text-sm">
-            <p>
-              &copy; 2025 Chess NCC Vinh Tournament. Tất cả quyền được bảo lưu.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </>
   );
 }
