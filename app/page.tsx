@@ -19,7 +19,6 @@ import {
   Clock,
   Star,
   MapPin,
-  Zap,
   Crown,
 } from "lucide-react";
 import Link from "next/link";
@@ -29,6 +28,9 @@ import { ChessPiece } from "@/components/chess-piece";
 import QRRegistration from "@/components/qr-registration";
 import { data } from "@/data/data";
 import * as THREE from "three";
+import { MezonAdPopup } from "@/components/MezonAdPopup";
+import { cn } from "@/lib/utils";
+import { sponsors } from "@/data/sponsors";
 
 interface AnimatedSphereProps {
   position: [number, number, number];
@@ -65,7 +67,12 @@ interface FlyingDragonProps {
   color?: string;
 }
 
-function FlyingDragon({ position, scale = 1, speed = 1, color = "#DC2626" }: FlyingDragonProps) {
+function FlyingDragon({
+  position,
+  scale = 1,
+  speed = 1,
+  color = "#DC2626",
+}: FlyingDragonProps) {
   const dragonRef = useRef<THREE.Group>(null);
   const wingLeftRef = useRef<THREE.Group>(null);
   const wingRightRef = useRef<THREE.Group>(null);
@@ -1347,46 +1354,54 @@ export default function ChessTournamentPage() {
           </div>
         </section>
 
-      <section
-        id="register"
-        className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
-      >
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white">
-            <CardContent className="p-6 sm:p-8">
-              <div className="space-y-8">
-                <div className="text-center">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-4">
-                    Điều kiện tham gia:
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm sm:text-base">
-                    <div className="bg-indigo-800/30 rounded-lg p-3">
-                      <div className="font-semibold text-indigo-300">ELO tối thiểu</div>
-                      <div className="text-white">400</div>
-                    </div>
-                    <div className="bg-purple-800/30 rounded-lg p-3">
-                      <div className="font-semibold text-purple-300">Lệ phí</div>
-                      <div className="text-white">$50,000</div>
-                    </div>
-                    <div className="bg-pink-800/30 rounded-lg p-3">
-                      <div className="font-semibold text-pink-300">Hạn đăng ký</div>
-                      <div className="text-white">19/7/2025</div>
-                    </div>
-                    <div className="bg-indigo-800/30 rounded-lg p-3">
-                      <div className="font-semibold text-indigo-300">Giới hạn</div>
-                      <div className="text-white">256 kỳ thủ</div>
+        <section
+          id="register"
+          className="py-12 sm:py-20 px-4 bg-black/20 backdrop-blur-sm"
+        >
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 backdrop-blur-sm border-indigo-500/30 text-white">
+              <CardContent className="p-6 sm:p-8">
+                <div className="space-y-8">
+                  <div className="text-center">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-4">
+                      Điều kiện tham gia:
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm sm:text-base">
+                      <div className="bg-indigo-800/30 rounded-lg p-3">
+                        <div className="font-semibold text-indigo-300">
+                          ELO tối thiểu
+                        </div>
+                        <div className="text-white">400</div>
+                      </div>
+                      <div className="bg-purple-800/30 rounded-lg p-3">
+                        <div className="font-semibold text-purple-300">
+                          Lệ phí
+                        </div>
+                        <div className="text-white">$50,000</div>
+                      </div>
+                      <div className="bg-pink-800/30 rounded-lg p-3">
+                        <div className="font-semibold text-pink-300">
+                          Hạn đăng ký
+                        </div>
+                        <div className="text-white">19/7/2025</div>
+                      </div>
+                      <div className="bg-indigo-800/30 rounded-lg p-3">
+                        <div className="font-semibold text-indigo-300">
+                          Giới hạn
+                        </div>
+                        <div className="text-white">256 kỳ thủ</div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="border-t border-indigo-500/30 pt-8">
-                  <QRRegistration />
+                  <div className="border-t border-indigo-500/30 pt-8">
+                    <QRRegistration />
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
         {/* Footer */}
         <footer className="py-8 sm:py-12 px-4 border-t border-indigo-500/20 bg-black/30 backdrop-blur-sm">
